@@ -5,7 +5,8 @@ import 'pages/carbon_calculator.dart';
 import 'pages/green_points.dart';
 import 'pages/dashboard.dart';
 import 'pages/esg_report.dart';
-import 'pages/user_profile.dart';
+import 'pages/user_profile.dart' as profile;
+import 'widgets/side_drawer.dart'; // ✅ 必須加上這行
 
 void main() {
   runApp(const GreenWayApp());
@@ -37,58 +38,55 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
-  static const List<Widget> _pages = <Widget>[
-    HomeScreen(),
-    RoutePlanner(),
-    CarbonCalculator(),
-    GreenPointsPage(),
-    DashboardPage(),
-    ESGReportPage(),
-    UserProfilePage(), // index = 6
-  ];
+  bool isLoggedIn = false;
+  String currentUser = '';
 
   void _onItemTap(int index) {
     setState(() {
       _selectedIndex = index;
-      Navigator.pop(context); // 關閉 Drawer
     });
+    Navigator.pop(context);
   }
+
+  List<Widget> get _pages => [
+    const HomeScreen(),
+    const RoutePlannerPage(),
+    const CarbonCalculator(),
+    const GreenPointsPage(),
+    const DashboardPage(),
+    const ESGReportPage(),
+    profile.UserProfilePage(
+      userName: currentUser,
+      onLogout: () {
+        setState(() {
+          isLoggedIn = false;
+          currentUser = '';
+          _selectedIndex = 0;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('已登出')));
+      },
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('GreenWay 綠跡通')),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(color: Colors.green),
-              accountName: const Text('使用者名稱'),
-              accountEmail: const Text('等級：綠能小尖兵\n碳排：123.4 kg CO₂e'),
-              currentAccountPicture: GestureDetector(
-                onTap: () => _onItemTap(6),
-                child: const CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, color: Colors.green),
-                ),
-              ),
-              onDetailsPressed: () => _onItemTap(6),
-            ),
-            ListTile(title: const Text('首頁'), onTap: () => _onItemTap(0)),
-            ListTile(title: const Text('多式聯運路線規劃'), onTap: () => _onItemTap(1)),
-            ListTile(title: const Text('碳足跡即時換算'), onTap: () => _onItemTap(2)),
-            ListTile(title: const Text('綠點累積與兌換'), onTap: () => _onItemTap(3)),
-            ListTile(title: const Text('個人碳排儀表板'), onTap: () => _onItemTap(4)),
-            ListTile(
-              title: const Text('企業 ESG 連動'),
-              onTap: () => _onItemTap(5),
-            ),
-          ],
-        ),
+      drawer: SideDrawer(
+        isLoggedIn: isLoggedIn,
+        currentUser: currentUser,
+        onLoginSuccess: (username) {
+          setState(() {
+            isLoggedIn = true;
+            currentUser = username;
+            _selectedIndex = 6;
+          });
+        },
+        onTapItem: _onItemTap,
       ),
-      body: Center(child: _pages[_selectedIndex]),
+      body: _pages[_selectedIndex],
     );
   }
 }
