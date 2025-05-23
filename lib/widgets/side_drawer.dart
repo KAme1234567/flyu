@@ -29,27 +29,32 @@ class SideDrawer extends StatelessWidget {
           builder:
               (context, setState) => AlertDialog(
                 title: const Text('登入'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      decoration: const InputDecoration(labelText: '帳號'),
-                      onChanged: (val) => username = val,
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(labelText: '密碼'),
-                      obscureText: true,
-                      onChanged: (val) => password = val,
-                    ),
-                    if (errorText != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: Text(
-                          errorText!,
-                          style: const TextStyle(color: Colors.red),
+                content: SingleChildScrollView(
+                  child: IntrinsicWidth(
+                    stepWidth: 200,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          decoration: const InputDecoration(labelText: '帳號'),
+                          onChanged: (val) => username = val,
                         ),
-                      ),
-                  ],
+                        TextField(
+                          decoration: const InputDecoration(labelText: '密碼'),
+                          obscureText: true,
+                          onChanged: (val) => password = val,
+                        ),
+                        if (errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Text(
+                              errorText!,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
                 actions: [
                   TextButton(
@@ -116,35 +121,46 @@ class SideDrawer extends StatelessWidget {
           builder:
               (context, setState) => AlertDialog(
                 title: const Text('註冊帳號'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      decoration: const InputDecoration(labelText: '使用者名稱'),
-                      onChanged: (value) => username = value,
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(labelText: '密碼'),
-                      obscureText: true,
-                      onChanged: (value) => password = value,
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(labelText: '暱稱'),
-                      onChanged: (value) => name = value,
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(labelText: '電子郵件'),
-                      onChanged: (value) => email = value,
-                    ),
-                    if (errorText != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: Text(
-                          errorText!,
-                          style: const TextStyle(color: Colors.red),
-                        ),
+                content: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 340),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            decoration: const InputDecoration(
+                              labelText: '使用者名稱',
+                            ),
+                            onChanged: (value) => username = value,
+                          ),
+                          TextField(
+                            decoration: const InputDecoration(labelText: '密碼'),
+                            obscureText: true,
+                            onChanged: (value) => password = value,
+                          ),
+                          TextField(
+                            decoration: const InputDecoration(labelText: '暱稱'),
+                            onChanged: (value) => name = value,
+                          ),
+                          TextField(
+                            decoration: const InputDecoration(
+                              labelText: '電子郵件',
+                            ),
+                            onChanged: (value) => email = value,
+                          ),
+                          if (errorText != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: Text(
+                                errorText!,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ),
+                        ],
                       ),
-                  ],
+                    ),
+                  ),
                 ),
                 actions: [
                   TextButton(
@@ -202,7 +218,10 @@ class SideDrawer extends StatelessWidget {
           isLoggedIn
               ? UserAccountsDrawerHeader(
                 decoration: const BoxDecoration(color: Colors.green),
-                accountName: Text(currentUser),
+                accountName: Text(
+                  currentUser,
+                  overflow: TextOverflow.ellipsis, // 防止名稱太長擠出
+                ),
                 accountEmail: const Text('歡迎使用 GreenWay'),
                 currentAccountPicture: GestureDetector(
                   onTap: () => onTapItem(6),
@@ -213,32 +232,39 @@ class SideDrawer extends StatelessWidget {
                 ),
                 onDetailsPressed: () => onTapItem(6),
               )
-              : DrawerHeader(
-                decoration: const BoxDecoration(color: Colors.green),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.lock_outline,
-                      size: 48,
-                      color: Colors.white,
+              : SizedBox(
+                height: 200,
+                child: DrawerHeader(
+                  decoration: const BoxDecoration(color: Colors.green),
+                  margin: EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.lock_outline,
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          '尚未登入',
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton.icon(
+                          onPressed: () => _showLoginDialog(context),
+                          icon: const Icon(Icons.login),
+                          label: const Text('登入 / 註冊'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.green,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '尚未登入',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    const SizedBox(height: 8),
-                    ElevatedButton.icon(
-                      onPressed: () => _showLoginDialog(context),
-                      icon: const Icon(Icons.login),
-                      label: const Text('登入 / 註冊'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.green,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
           ListTile(
@@ -270,6 +296,11 @@ class SideDrawer extends StatelessWidget {
             leading: const Icon(Icons.business),
             title: const Text('企業 ESG 連動'),
             onTap: () => onTapItem(5),
+          ),
+          ListTile(
+            leading: const Icon(Icons.group),
+            title: const Text('碳排社群'),
+            onTap: () => onTapItem(7),
           ),
         ],
       ),

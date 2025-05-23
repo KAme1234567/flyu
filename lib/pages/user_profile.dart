@@ -78,7 +78,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('👤 用戶資訊')),
+      backgroundColor: const Color(0xFFF0F9F0),
+      appBar: AppBar(
+        title: const Text('👤 用戶資訊'),
+        backgroundColor: Colors.green[400],
+        foregroundColor: Colors.white,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child:
@@ -94,35 +99,116 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '使用者 ID：${summary?['user_id']}',
-                      style: const TextStyle(fontSize: 20),
+                    _ProfileCard(summary: summary!),
+                    const SizedBox(height: 24),
+                    const Text(
+                      '⚙️ 設定項目',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    const Text('目前等級：Lv.3 - 綠能小尖兵'),
-                    const SizedBox(height: 12),
-                    Text('累積碳排量：${summary?['total_emission_g']} g CO₂e'),
-                    const SizedBox(height: 12),
-                    Text('綠點：${summary?['total_points']} 點'),
-                    const Divider(height: 32),
-                    const Text('⚙️ 設定項目', style: TextStyle(fontSize: 18)),
-                    ListTile(
-                      leading: const Icon(Icons.edit),
-                      title: const Text('修改個人資料'),
-                      onTap: () => _editProfile(context),
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.lock),
-                      title: const Text('變更密碼'),
-                      onTap: () => _changePassword(context),
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.logout),
-                      title: const Text('登出帳號'),
-                      onTap: widget.onLogout,
+                    const SizedBox(height: 8),
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: const Icon(
+                              Icons.edit,
+                              color: Colors.green,
+                            ),
+                            title: const Text('修改個人資料'),
+                            onTap: () => _editProfile(context),
+                          ),
+                          const Divider(height: 1),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.lock,
+                              color: Colors.green,
+                            ),
+                            title: const Text('變更密碼'),
+                            onTap: () => _changePassword(context),
+                          ),
+                          const Divider(height: 1),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.logout,
+                              color: Colors.red,
+                            ),
+                            title: const Text('登出帳號'),
+                            onTap: widget.onLogout,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
+      ),
+    );
+  }
+}
+
+class _ProfileCard extends StatelessWidget {
+  final Map<String, dynamic> summary;
+
+  const _ProfileCard({required this.summary});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 28,
+                  backgroundColor: Colors.green,
+                  child: Icon(Icons.person, color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  'ID：${summary['user_id']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: const [
+                Icon(Icons.emoji_events, color: Colors.orange),
+                SizedBox(width: 8),
+                Text('目前等級：Lv.3 - 綠能小尖兵'),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.cloud, color: Colors.blueGrey),
+                const SizedBox(width: 8),
+                Text('累積碳排量：${summary['total_emission_g']} g CO₂e'),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.eco, color: Colors.green),
+                const SizedBox(width: 8),
+                Text('綠點：${summary['total_points']} 點'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

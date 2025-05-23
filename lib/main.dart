@@ -7,6 +7,7 @@ import 'pages/dashboard.dart';
 import 'pages/esg_report.dart';
 import 'pages/user_profile.dart' as profile;
 import 'widgets/side_drawer.dart'; // ✅ 必須加上這行
+import 'pages/community_page.dart';
 
 void main() {
   runApp(const GreenWayApp());
@@ -68,6 +69,7 @@ class _HomePageState extends State<HomePage> {
         ).showSnackBar(const SnackBar(content: Text('已登出')));
       },
     ),
+    const CommunityPage(),
   ];
 
   @override
@@ -81,7 +83,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             isLoggedIn = true;
             currentUser = username;
-            _selectedIndex = 6;
+            _selectedIndex = 7;
           });
         },
         onTapItem: _onItemTap,
